@@ -1,4 +1,4 @@
-const API = import.meta.env.VITE_API_URL || 'https://nardio.online'
+const API = import.meta.env.VITE_API_URL || 'https://nardio.online/api'
 
 
 const handle = async (res) => {

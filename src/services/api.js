@@ -1,4 +1,7 @@
-const BASE = 'https://nardio.online';
+// All requests must go through /api so Nginx can proxy them to Express on port 8007.
+// https://nardio.online        → Nginx serves the React static build
+// https://nardio.online/api/*  → Nginx proxies to http://localhost:8007/api/*
+const BASE = import.meta.env.VITE_API_URL || 'https://nardio.online/api';
 
 const request = async (endpoint, { body, method = 'GET', headers = {}, isFormData = false } = {}) => {
   const token = localStorage.getItem('kr_token')
