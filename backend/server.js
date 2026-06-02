@@ -18,9 +18,10 @@ const PORT = process.env.PORT || 8007
 
 // ── CORS ────────────────────────────────────────────────────────────────────
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'https://nardio.online',
-  credentials: true,
-}))
+  origin: ['https://nardio.online', 'https://www.nardio.online'],
+  credentials: true
+}));
+
 
 // ── Body parsers ─────────────────────────────────────────────────────────────
 app.use(express.json())
