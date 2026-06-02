@@ -1,4 +1,4 @@
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+const API = import.meta.env.VITE_API_URL || 'https://nardio.online'
 
 const handle = async (res) => {
   const data = await res.json().catch(() => ({}))

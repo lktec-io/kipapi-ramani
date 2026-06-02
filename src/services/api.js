@@ -1,4 +1,4 @@
-const BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+const BASE = import.meta.env.VITE_API_URL || 'https://nardio.online'
 
 const request = async (endpoint, { body, method = 'GET', headers = {}, isFormData = false } = {}) => {
   const token = localStorage.getItem('kr_token')
