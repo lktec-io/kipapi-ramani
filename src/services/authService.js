@@ -1,5 +1,6 @@
 const API = import.meta.env.VITE_API_URL || 'https://nardio.online'
 
+
 const handle = async (res) => {
   const data = await res.json().catch(() => ({}))
   if (!res.ok) throw new Error(data.message || `Request failed (${res.status})`)
