@@ -14,11 +14,11 @@ import paymentRoutes  from './routes/payments.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 8007
 
 // ── CORS ────────────────────────────────────────────────────────────────────
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: process.env.CLIENT_URL || 'https://nardio.online',
   credentials: true,
 }))
 
