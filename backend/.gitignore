@@ -1,0 +1,10 @@
+node_modules/
+.env
+
+# Premium files must NEVER go to version control
+secure_storage/
+
+# Uploaded thumbnails (managed by server, not git)
+uploads/
+
+*.log

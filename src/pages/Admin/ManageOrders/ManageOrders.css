@@ -1,0 +1,105 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   MANAGE ORDERS PAGE
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.orders-page { animation: fadeSlideUp 0.35s ease both; }
+
+/* Revenue summary pill */
+.orders-summary-pill {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  padding: 8px 16px;
+  background: var(--color-surface); border: 1.5px solid var(--color-border);
+  border-radius: 999px; font-size: 0.82rem; color: var(--color-text-muted);
+}
+.orders-summary-pill strong { color: var(--color-primary); }
+.orders-summary-pill svg    { color: var(--color-success); }
+
+/* ── Filter chips ─────────────────────────────────────────────────────────── */
+.orders-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+
+.orders-filter-chip {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  padding: 7px 14px;
+  background: var(--color-surface); border: 1.5px solid var(--color-border);
+  border-radius: 999px; font-family: var(--font-sans);
+  font-size: 0.78rem; font-weight: 600; color: var(--color-text-muted);
+  cursor: pointer; transition: border-color 0.18s, color 0.18s, background 0.18s;
+}
+.orders-filter-chip:hover {
+  border-color: var(--color-primary); color: var(--color-primary);
+}
+.orders-filter-chip--active {
+  background: var(--color-primary); border-color: var(--color-primary); color: #fff;
+}
+.orders-filter-chip--active .orders-filter-count { background: rgba(255,255,255,0.25); color: #fff; }
+
+.orders-filter-count {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 20px; height: 20px; padding: 0 5px;
+  background: var(--color-bg); border-radius: 999px;
+  font-size: 0.65rem; font-weight: 800; color: var(--color-text-muted);
+}
+
+/* ── Table ────────────────────────────────────────────────────────────────── */
+.orders-table-wrap { overflow-x: auto; }
+
+.orders-table .admin-table__row--verified {
+  background: rgba(46,125,50,0.04);
+  animation: verifiedFlash 0.4s ease both;
+}
+
+@keyframes verifiedFlash {
+  0%  { background: rgba(46,125,50,0.15); }
+  100%{ background: rgba(46,125,50,0.04); }
+}
+
+/* ── Action column ────────────────────────────────────────────────────────── */
+.verify-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 12px;
+  background: rgba(249,115,22,0.1); color: var(--color-accent);
+  border: 1.5px solid rgba(249,115,22,0.3); border-radius: var(--radius-md);
+  font-family: var(--font-sans); font-size: 0.72rem; font-weight: 700;
+  cursor: pointer; white-space: nowrap;
+  transition: background 0.18s, border-color 0.18s, transform 0.1s;
+}
+.verify-btn:hover:not(:disabled) {
+  background: var(--color-accent); color: #fff;
+  border-color: var(--color-accent); transform: translateY(-1px);
+}
+.verify-btn:disabled { opacity: 0.65; cursor: wait; }
+
+.verify-confirmed {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 0.72rem; font-weight: 700; color: var(--color-success);
+  animation: successPop 0.35s ease both;
+}
+
+.verify-na {
+  font-size: 0.78rem; color: var(--color-text-muted); display: block; text-align: center;
+}
+
+/* ── Empty state ──────────────────────────────────────────────────────────── */
+.orders-empty {
+  padding: var(--space-12) var(--space-6);
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-4);
+}
+.orders-empty p { font-size: 0.88rem; color: var(--color-text-muted); }
+.orders-reset-btn {
+  padding: 9px 20px; background: var(--color-primary); color: #fff;
+  border: none; border-radius: var(--radius-md); font-family: var(--font-sans);
+  font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: background 0.18s;
+}
+.orders-reset-btn:hover { background: var(--color-primary-light); }
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .orders-filters { gap: var(--space-2); }
+  .orders-filter-chip { padding: 6px 10px; font-size: 0.74rem; }
+}
