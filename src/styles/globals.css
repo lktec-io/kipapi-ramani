@@ -43,11 +43,33 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  /* ── Global: remove browser default focus rings app-wide ────────────────
+     Each component defines its OWN clean focus indicator
+     (border-color shift + box-shadow) instead of the browser glow box. */
+  outline: none !important;
+  /* Eliminate the grey/blue tap-flash on mobile browsers */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Accessibility: keyboard-only focus visible ring ─────────────────────────
+   Re-add a subtle focus ring ONLY when navigating by keyboard (Tab key).
+   This preserves accessibility while removing the ugly mouse-click rings. */
+:focus-visible {
+  outline: 2px solid var(--color-accent) !important;
+  outline-offset: 2px !important;
+}
+/* Suppress :focus-visible on form inputs — they have their own border effect */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none !important;
 }
 
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  /* Prevent horizontal scrollbar flash that triggers layout shifts */
+  overflow-x: hidden;
 }
 
 body {
@@ -58,9 +80,19 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  overflow-x: hidden;
 }
 
-img, svg {
+/* ── CLS prevention: stable image dimensions before load ─────────────────────
+   `height: auto` ensures images do not cause layout shifts while loading.
+   Set explicit width/height attributes on <img> tags for maximum stability. */
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+svg {
   display: block;
   max-width: 100%;
 }
@@ -75,6 +107,8 @@ button {
   border: none;
   background: none;
   font-family: inherit;
+  /* Prevent double-tap zoom on iOS */
+  touch-action: manipulation;
 }
 
 ul, ol {
@@ -84,6 +118,8 @@ ul, ol {
 input, select, textarea {
   font-family: inherit;
   font-size: 1rem;
+  /* Modern clean focus — each component overrides border-color + box-shadow */
+  border-radius: var(--radius-md);
 }
 
 .app-shell {

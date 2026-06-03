@@ -293,20 +293,125 @@
 }
 .auth-switch__btn:hover { color: var(--color-accent); }
 
-/* ── Responsive ───────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESPONSIVE — Mobile-first breakpoints
+   Design goal: brand panel hides, form fills full viewport cleanly with
+   spacious touch targets and zero horizontal overflow at any viewport width.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Tablet + phone (≤ 860px) ─────────────────────────────────────────────── */
 @media (max-width: 860px) {
-  .auth-page   { grid-template-columns: 1fr; }
-  .auth-brand  { display: none; }
+  /* Switch from split two-column to single-column */
+  .auth-page {
+    grid-template-columns: 1fr;
+    min-height: calc(100vh - var(--navbar-height));
+  }
+
+  /* Hide the left brand panel — only the form shows */
+  .auth-brand { display: none; }
+
+  /* Show mobile logo above the toggle */
   .auth-card__mobile-logo { display: flex; }
+
+  /* Form panel fills the viewport naturally */
   .auth-form-panel {
     min-height: calc(100vh - var(--navbar-height));
-    padding: var(--space-6) var(--space-4);
+    padding: var(--space-8) var(--space-5);
     align-items: flex-start;
+    justify-content: flex-start;
   }
-  .auth-card { animation: fadeSlideUp 0.4s ease both; }
+
+  /* Card: full available width, no horizontal overflow */
+  .auth-card {
+    max-width: 100%;
+    width: 100%;
+    animation: fadeSlideUp 0.4s ease both;
+  }
+
+  /* Form box: enforce full-width containment */
+  .auth-form {
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
+/* ── Mobile (≤ 600px) — spacious touch targets ────────────────────────────── */
+@media (max-width: 600px) {
+  .auth-form-panel {
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .auth-form {
+    padding: var(--space-6);
+    gap: var(--space-4);
+  }
+
+  .auth-form__title { font-size: 1.25rem; }
+
+  /* Larger input touch targets */
+  .auth-input {
+    padding: 13px 14px;
+    font-size: 0.95rem;
+    min-height: 50px;
+  }
+
+  .auth-input--pw { padding-right: 48px; }
+
+  /* Bigger, easy-to-tap toggle buttons */
+  .auth-toggle { padding: 3px; gap: 3px; }
+  .auth-toggle__btn {
+    padding: 11px 8px;
+    font-size: 0.8rem;
+    min-height: 44px;
+  }
+
+  /* Submit CTA: full-width, pinned, large tap area */
+  .auth-submit-btn {
+    padding: 15px var(--space-4);
+    font-size: 0.95rem;
+    min-height: 52px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Password toggle stays accessible */
+  .auth-pw-toggle {
+    width: 40px;
+    height: 40px;
+    right: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* ── Small mobile (≤ 420px) ──────────────────────────────────────────────── */
 @media (max-width: 420px) {
-  .auth-form { padding: var(--space-5); }
-  .auth-toggle__btn { font-size: 0.78rem; padding: 9px; }
+  .auth-form-panel {
+    padding: var(--space-5) var(--space-3);
+  }
+
+  .auth-form {
+    padding: var(--space-5);
+    border-radius: var(--radius-md);
+  }
+
+  .auth-form__title { font-size: 1.15rem; }
+
+  /* Prevent toggle text from wrapping */
+  .auth-toggle__btn {
+    font-size: 0.76rem;
+    padding: 10px 6px;
+    letter-spacing: 0;
+  }
+}
+
+/* ── Extra-small (≤ 360px, e.g. Galaxy A10 portrait) ─────────────────────── */
+@media (max-width: 360px) {
+  .auth-form-panel { padding: var(--space-4) var(--space-3); }
+  .auth-form        { padding: var(--space-4); }
+  .auth-card        { gap: var(--space-4); }
+  .auth-form__title { font-size: 1.1rem; }
+  .auth-input       { min-height: 48px; }
+  .auth-submit-btn  { min-height: 50px; }
 }

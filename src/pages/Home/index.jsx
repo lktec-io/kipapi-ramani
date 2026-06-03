@@ -4,36 +4,9 @@ import { Search, ShieldCheck, Zap, Sliders, BadgeCheck, ArrowRight, Loader2 } fr
 import PlanCard from '../../components/ui/PlanCard/PlanCard.jsx'
 import { fetchPlans } from '../../services/plansService.js'
 import { mockPlans } from '../../services/mockPlans.js'
+// ── Externalized slide config — edit src/config/publicSlides.js to update ───
+import { HERO_SLIDES as SLIDES } from '../../config/publicSlides.js'
 import './Home.css'
-
-/*
- * UNIFIED SLIDES ARRAY
- * ─────────────────────
- * A single source of truth for both the background image AND the headline
- * keyword. When `activeIndex` increments, BOTH update simultaneously:
- *   - `SLIDES[activeIndex].image` drives the CSS opacity cross-fade
- *   - `SLIDES[activeIndex].text`  drives the slideUpFade text morph
- *
- * Swap the `image` URLs for real architectural renders when available.
- */
-const SLIDES = [
-  {
-    text:  'Modern Homes',
-    image: 'https://placehold.co/1440x900/0d2139/f97316?text=Modern+Villa+Design',
-  },
-  {
-    text:  'Affordable Bungalows',
-    image: 'https://placehold.co/1440x900/4e342e/ffcc80?text=Affordable+Bungalow',
-  },
-  {
-    text:  'Luxury Apartments',
-    image: 'https://placehold.co/1440x900/1a237e/90caf9?text=Luxury+Apartment',
-  },
-  {
-    text:  'Contemporary Layouts',
-    image: 'https://placehold.co/1440x900/004d40/a5d6a7?text=Contemporary+Layout',
-  },
-]
 
 const FEATURES = [
   {
