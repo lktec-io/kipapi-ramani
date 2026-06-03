@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Search, ShieldCheck, Zap, Sliders, BadgeCheck, ArrowRight, Loader2 } from 'lucide-react'
 import PlanCard from '../../components/ui/PlanCard/PlanCard.jsx'
@@ -6,27 +6,22 @@ import { fetchPlans } from '../../services/plansService.js'
 import { mockPlans } from '../../services/mockPlans.js'
 import './Home.css'
 
-// ── Hero slideshow config ───────────────────────────────────────────────────
-// Replace image URLs with real architectural renders when available.
-const HERO_SLIDES = [
-  {
-    keyword: 'Modern Homes',
-    image:   'https://placehold.co/1440x900/0d2139/f97316?text=Modern+Villa+Design',
-  },
-  {
-    keyword: 'Bungalows',
-    image:   'https://placehold.co/1440x900/4e342e/ffcc80?text=Classic+Bungalow',
-  },
-  {
-    keyword: 'Luxury Villas',
-    image:   'https://placehold.co/1440x900/1a237e/90caf9?text=Luxury+Villa',
-  },
-  {
-    keyword: 'Affordable Plans',
-    image:   'https://placehold.co/1440x900/004d40/a5d6a7?text=Starter+Home',
-  },
+// ── Text carousel — cycles every 3.5 s ─────────────────────────────────────
+const HEADLINES = [
+  'Modern Homes',
+  'Affordable Bungalows',
+  'Luxury Apartments',
+  'Contemporary Layouts',
 ]
-const SLIDE_INTERVAL = 5500 // ms
+
+// ── Image carousel — cycles every 4 s ──────────────────────────────────────
+// Swap these URLs for real architectural renders when available.
+const HERO_IMAGES = [
+  'https://placehold.co/1440x900/0d2139/f97316?text=Modern+Villa+Design',
+  'https://placehold.co/1440x900/4e342e/ffcc80?text=Affordable+Bungalow',
+  'https://placehold.co/1440x900/1a237e/90caf9?text=Luxury+Apartment',
+  'https://placehold.co/1440x900/004d40/a5d6a7?text=Contemporary+Layout',
+]
 
 const FEATURES = [
   {
@@ -55,12 +50,14 @@ export default function HomePage() {
   const [query,         setQuery]         = useState('')
   const [featuredPlans, setFeaturedPlans] = useState([])
   const [plansLoading,  setPlansLoading]  = useState(true)
-  const [slideIndex,    setSlideIndex]    = useState(0)
-  const [paused,        setPaused]        = useState(false)
-  const timerRef = useRef(null)
+
+  // Two independent carousel indices with separate timers
+  const [textIndex, setTextIndex] = useState(0)
+  const [imgIndex,  setImgIndex]  = useState(0)
+
   const navigate = useNavigate()
 
-  // ── Fetch featured plans ──────────────────────────────────────────────────
+  // ── Fetch featured plans (3 most-recent) ─────────────────────────────────
   useEffect(() => {
     fetchPlans()
       .then(plans => setFeaturedPlans(plans.slice(0, 3)))
@@ -68,26 +65,21 @@ export default function HomePage() {
       .finally(() => setPlansLoading(false))
   }, [])
 
-  // ── Auto-advance slideshow ────────────────────────────────────────────────
+  // ── Text carousel: 3.5 s — completely independent from images ────────────
   useEffect(() => {
-    if (paused) return
-    timerRef.current = setInterval(() => {
-      setSlideIndex(i => (i + 1) % HERO_SLIDES.length)
-    }, SLIDE_INTERVAL)
-    return () => clearInterval(timerRef.current)
-  }, [paused])
+    const id = setInterval(() => {
+      setTextIndex(prev => (prev + 1) % HEADLINES.length)
+    }, 3500)
+    return () => clearInterval(id)
+  }, []) // [] — fires once on mount, cleans up on unmount
 
-  const goToSlide = (i) => {
-    clearInterval(timerRef.current)
-    setSlideIndex(i)
-    // Restart auto-advance after manual select
-    if (!paused) {
-      timerRef.current = setInterval(
-        () => setSlideIndex(prev => (prev + 1) % HERO_SLIDES.length),
-        SLIDE_INTERVAL
-      )
-    }
-  }
+  // ── Image carousel: 4 s — independent timer ───────────────────────────────
+  useEffect(() => {
+    const id = setInterval(() => {
+      setImgIndex(prev => (prev + 1) % HERO_IMAGES.length)
+    }, 4000)
+    return () => clearInterval(id)
+  }, []) // [] — fires once on mount, cleans up on unmount
 
   const handleSearch = (e) => {
     e.preventDefault()
@@ -98,24 +90,23 @@ export default function HomePage() {
   return (
     <div className="home">
 
-      {/* ── Hero ──────────────────────────────────────────────────────────── */}
-      <section
-        className="hero"
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => setPaused(false)}
-      >
-        {/* Slideshow images */}
+      {/* ══════════════════════════════════════════════════════════════════════
+          HERO
+          ══════════════════════════════════════════════════════════════════════ */}
+      <section className="hero">
+
+        {/* Background image layers — cross-fade controlled by imgIndex */}
         <div className="hero__slides" aria-hidden="true">
-          {HERO_SLIDES.map((slide, i) => (
+          {HERO_IMAGES.map((src, i) => (
             <div
               key={i}
-              className={`hero__slide${slideIndex === i ? ' hero__slide--active' : ''}`}
-              style={{ backgroundImage: `url(${slide.image})` }}
+              className={`hero__slide${imgIndex === i ? ' hero__slide--active' : ''}`}
+              style={{ backgroundImage: `url(${src})` }}
             />
           ))}
         </div>
 
-        {/* Dark gradient overlay — keeps text readable over any image */}
+        {/* Semi-transparent overlay — text always readable */}
         <div className="hero__overlay" aria-hidden="true" />
 
         {/* Decorative glow circles */}
@@ -123,15 +114,22 @@ export default function HomePage() {
         <div className="hero__circle hero__circle--2" aria-hidden="true" />
         <div className="hero__circle hero__circle--3" aria-hidden="true" />
 
-        {/* Main content */}
+        {/* ── Hero copy ──────────────────────────────────────────────────── */}
         <div className="hero__content">
-          <p className="hero__eyebrow">Tanzania's #1 House Plan Marketplace</p>
+
+          <p className="hero__eyebrow" aria-label="Tanzania's number one house plan marketplace">
+            Tanzania's #1 House Plan Marketplace
+          </p>
 
           <h1 className="hero__headline">
             Pata Ramani ya
-            {/* key forces re-mount → re-triggers keywordEnter CSS animation */}
-            <span key={slideIndex} className="hero__keyword">
-              {HERO_SLIDES[slideIndex].keyword}
+            {/*
+              key={textIndex} forces React to unmount + remount this span
+              on every interval tick, which re-triggers the slideUpFade
+              CSS animation — no JS animation library needed.
+            */}
+            <span key={textIndex} className="hero__keyword" aria-live="polite">
+              {HEADLINES[textIndex]}
             </span>
           </h1>
 
@@ -158,7 +156,7 @@ export default function HomePage() {
             </div>
           </form>
 
-          {/* Quick filter tags */}
+          {/* Quick filter tag pills */}
           <div className="hero__quick-tags">
             {['3-Bedroom', '4-Bedroom', 'Modern', 'Bungalow', 'Double-Storey'].map(tag => (
               <Link key={tag} to={`/plans?search=${encodeURIComponent(tag)}`} className="hero__tag">
@@ -168,16 +166,15 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Slide dot indicators */}
-        <div className="hero__dots" role="tablist" aria-label="Hero slides">
-          {HERO_SLIDES.map((_, i) => (
+        {/* Image carousel dot indicators */}
+        <div className="hero__dots" role="group" aria-label="Background slide indicators">
+          {HERO_IMAGES.map((_, i) => (
             <button
               key={i}
-              role="tab"
-              aria-selected={slideIndex === i}
-              aria-label={`View slide ${i + 1}: ${HERO_SLIDES[i].keyword}`}
-              className={`hero__dot${slideIndex === i ? ' hero__dot--active' : ''}`}
-              onClick={() => goToSlide(i)}
+              aria-label={`Slide ${i + 1}`}
+              aria-current={imgIndex === i ? 'true' : 'false'}
+              className={`hero__dot${imgIndex === i ? ' hero__dot--active' : ''}`}
+              onClick={() => setImgIndex(i)}
             />
           ))}
         </div>
@@ -185,10 +182,10 @@ export default function HomePage() {
         {/* Stats bar */}
         <div className="hero__stats">
           {[
-            { value: '100+', label: 'House Plans' },
-            { value: '500+', label: 'Happy Clients' },
+            { value: '100+', label: 'House Plans'     },
+            { value: '500+', label: 'Happy Clients'   },
             { value: '4',    label: 'Payment Options' },
-            { value: '48h',  label: 'Support Response' },
+            { value: '48h',  label: 'Support Response'},
           ].map(stat => (
             <div key={stat.label} className="hero__stat">
               <span className="hero__stat-value">{stat.value}</span>
@@ -198,7 +195,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Features ──────────────────────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════════════════════
+          FEATURES
+          ══════════════════════════════════════════════════════════════════════ */}
       <section className="home-section features-section">
         <div className="home-section__inner">
           <div className="section-header">
@@ -210,7 +209,7 @@ export default function HomePage() {
               <div
                 key={f.title}
                 className="feature-card"
-                style={{ animationDelay: `${i * 80}ms` }}
+                style={{ animationDelay: `${i * 90}ms` }}
               >
                 <div className="feature-card__icon">{f.icon}</div>
                 <h3 className="feature-card__title">{f.title}</h3>
@@ -221,7 +220,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Featured Plans ────────────────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════════════════════
+          FEATURED PLANS
+          ══════════════════════════════════════════════════════════════════════ */}
       <section className="home-section plans-section">
         <div className="home-section__inner">
           <div className="section-header section-header--row">
@@ -244,7 +245,7 @@ export default function HomePage() {
                 <div
                   key={plan.id}
                   className="featured-plan-item"
-                  style={{ '--stagger-delay': `${i * 100}ms` }}
+                  style={{ '--stagger-delay': `${i * 110}ms` }}
                 >
                   <PlanCard plan={plan} />
                 </div>
@@ -254,7 +255,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── CTA Banner ────────────────────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════════════════════
+          CTA BANNER
+          ══════════════════════════════════════════════════════════════════════ */}
       <section className="cta-banner">
         <div className="cta-banner__inner">
           <div className="cta-banner__text">
