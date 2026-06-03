@@ -1,3 +1,7 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   PLAN CARD — Premium product card matching Maramani.com layout standard
+   ═══════════════════════════════════════════════════════════════════════════ */
+
 /* ── Card shell ───────────────────────────────────────────────────────────── */
 .plan-card {
   background: var(--color-surface);
@@ -31,17 +35,16 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.4s ease;
+  transition: transform 0.45s ease;
 }
 
 .plan-card:hover .plan-card__img {
-  transform: scale(1.05);
+  transform: scale(1.06);
 }
 
-/* ── Watermark overlay ────────────────────────────────────────────────────── */
+/* ── Watermark ────────────────────────────────────────────────────────────── */
 .plan-card__watermark {
   position: absolute;
-  /* Extend beyond all edges so rotation doesn't leave gaps */
   inset: -40%;
   width: 180%;
   height: 180%;
@@ -60,7 +63,7 @@
   font-size: 0.48rem;
   font-weight: 800;
   letter-spacing: 0.18em;
-  color: rgba(255, 255, 255, 0.28);
+  color: rgba(255, 255, 255, 0.25);
   text-transform: uppercase;
   white-space: nowrap;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
@@ -73,7 +76,7 @@
   top: var(--space-3);
   left: var(--space-3);
   z-index: 3;
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -82,11 +85,65 @@
   backdrop-filter: blur(6px);
 }
 
-.plan-card__style-badge--modern       { background: rgba(26,60,94,0.82); color: #e8a020; }
-.plan-card__style-badge--contemporary { background: rgba(52,73,94,0.82); color: #80deea; }
-.plan-card__style-badge--traditional  { background: rgba(93,64,55,0.82); color: #ffcc80; }
+.plan-card__style-badge--modern       { background: rgba(26,60,94,0.82);  color: #f97316; }
+.plan-card__style-badge--contemporary { background: rgba(52,73,94,0.82);  color: #80deea; }
+.plan-card__style-badge--traditional  { background: rgba(93,64,55,0.82);  color: #ffcc80; }
 
-/* ── Body ─────────────────────────────────────────────────────────────────── */
+/* ── "+ Quick Buy" hover button ───────────────────────────────────────────── */
+.plan-card__quick-buy {
+  position: absolute;
+  bottom: var(--space-3);
+  right: var(--space-3);
+  z-index: 4;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.45);
+
+  /* Hidden by default — slides up on card hover */
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.22s ease, background 0.15s;
+}
+
+/* Reveal on card hover */
+.plan-card:hover .plan-card__quick-buy {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.plan-card__quick-buy:hover  { background: var(--color-accent-hover); }
+.plan-card__quick-buy:active { transform: translateY(0) scale(0.96); }
+
+/* "In Cart" / "Added!" state */
+.plan-card__quick-buy--done {
+  background: var(--color-success);
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.4);
+  /* Stay visible when in cart, even without hover */
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.plan-card__quick-buy--done:hover { background: #256427; }
+
+/* ── Card body ────────────────────────────────────────────────────────────── */
 .plan-card__body {
   padding: var(--space-4);
   display: flex;
@@ -95,95 +152,115 @@
   flex: 1;
 }
 
+/* Title + price row */
+.plan-card__header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
 .plan-card__title {
-  font-size: 1rem;
+  font-size: 0.92rem;
   font-weight: 700;
   color: var(--color-primary);
   line-height: 1.3;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
 }
 
-/* ── Specs row ────────────────────────────────────────────────────────────── */
-.plan-card__specs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-3);
-}
-
-.plan-card__spec {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-  font-weight: 500;
-}
-
-.plan-card__spec svg {
+.plan-card__price {
+  font-size: 0.92rem;
+  font-weight: 800;
   color: var(--color-accent);
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: -0.01em;
+}
+
+/* ── Dual-row spec table ──────────────────────────────────────────────────── */
+.plan-card__specs-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.plan-card__spec-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Divider between rows */
+.plan-card__spec-row--plot {
+  border-top: 1px solid var(--color-border);
+  background: rgba(26, 60, 94, 0.02);
+}
+
+/* Individual spec cell */
+.plan-card__spec-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: var(--space-2) var(--space-1);
+  border-right: 1px solid var(--color-border);
+  text-align: center;
+  transition: background 0.15s;
+}
+
+.plan-card__spec-cell:last-child { border-right: none; }
+.plan-card__spec-cell:hover      { background: rgba(249, 115, 22, 0.04); }
+
+.plan-card__spec-icon {
+  color: var(--color-primary);
+  opacity: 0.55;
   flex-shrink: 0;
 }
 
-/* ── Footer row ───────────────────────────────────────────────────────────── */
+.plan-card__spec-row--plot .plan-card__spec-icon {
+  color: var(--color-accent);
+  opacity: 0.75;
+}
+
+.plan-card__spec-val {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.plan-card__spec-lbl {
+  font-size: 0.55rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* ── Footer ───────────────────────────────────────────────────────────────── */
 .plan-card__footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: var(--space-2);
   margin-top: auto;
   padding-top: var(--space-3);
   border-top: 1px solid var(--color-border);
 }
 
-.plan-card__price {
-  font-size: 1rem;
-  font-weight: 800;
-  color: var(--color-primary);
-  letter-spacing: -0.01em;
-}
-
-.plan-card__actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-/* Cart icon button */
-.plan-card__cart-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: var(--radius-md);
-  border: 1.5px solid var(--color-border);
-  color: var(--color-text-muted);
-  background: transparent;
-  cursor: pointer;
-  transition: border-color 0.18s, color 0.18s, background 0.18s;
-  flex-shrink: 0;
-}
-
-.plan-card__cart-btn:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-  background: rgba(232, 160, 32, 0.06);
-}
-
-.plan-card__cart-btn--added {
-  border-color: var(--color-success);
-  color: var(--color-success);
-  background: rgba(46, 125, 50, 0.06);
-  cursor: default;
-}
-
-/* View Details button */
+/* View Details */
 .plan-card__detail-btn {
+  flex: 1;
   display: inline-flex;
   align-items: center;
-  padding: 7px 14px;
+  justify-content: center;
+  padding: 8px var(--space-4);
   background: var(--color-primary);
   color: #fff;
   font-size: 0.75rem;
@@ -191,21 +268,42 @@
   letter-spacing: 0.04em;
   border-radius: var(--radius-md);
   text-decoration: none;
-  transition: background 0.18s, transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s;
-  white-space: nowrap;
+  transition: background 0.18s, transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .plan-card__detail-btn:hover {
   background: var(--color-primary-light);
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 4px 12px rgba(26, 60, 94, 0.3);
+  transform: translateY(-2px);
 }
 
-.plan-card__detail-btn:active {
-  transform: scale(0.96);
-  box-shadow: none;
+.plan-card__detail-btn:active { transform: scale(0.97); }
+
+/* Cart icon button */
+.plan-card__cart-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text-muted);
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.18s, color 0.18s, background 0.18s, transform 0.15s;
 }
 
-.plan-card__cart-btn:active {
-  transform: scale(0.88);
+.plan-card__cart-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: rgba(249, 115, 22, 0.06);
+}
+
+.plan-card__cart-btn:active { transform: scale(0.88); }
+
+.plan-card__cart-btn--added {
+  border-color: var(--color-success);
+  color: var(--color-success);
+  background: rgba(46, 125, 50, 0.07);
 }
