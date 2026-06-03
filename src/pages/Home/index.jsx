@@ -6,21 +6,33 @@ import { fetchPlans } from '../../services/plansService.js'
 import { mockPlans } from '../../services/mockPlans.js'
 import './Home.css'
 
-// ── Text carousel — cycles every 3.5 s ─────────────────────────────────────
-const HEADLINES = [
-  'Modern Homes',
-  'Affordable Bungalows',
-  'Luxury Apartments',
-  'Contemporary Layouts',
-]
-
-// ── Image carousel — cycles every 4 s ──────────────────────────────────────
-// Swap these URLs for real architectural renders when available.
-const HERO_IMAGES = [
-  'https://placehold.co/1440x900/0d2139/f97316?text=Modern+Villa+Design',
-  'https://placehold.co/1440x900/4e342e/ffcc80?text=Affordable+Bungalow',
-  'https://placehold.co/1440x900/1a237e/90caf9?text=Luxury+Apartment',
-  'https://placehold.co/1440x900/004d40/a5d6a7?text=Contemporary+Layout',
+/*
+ * UNIFIED SLIDES ARRAY
+ * ─────────────────────
+ * A single source of truth for both the background image AND the headline
+ * keyword. When `activeIndex` increments, BOTH update simultaneously:
+ *   - `SLIDES[activeIndex].image` drives the CSS opacity cross-fade
+ *   - `SLIDES[activeIndex].text`  drives the slideUpFade text morph
+ *
+ * Swap the `image` URLs for real architectural renders when available.
+ */
+const SLIDES = [
+  {
+    text:  'Modern Homes',
+    image: 'https://placehold.co/1440x900/0d2139/f97316?text=Modern+Villa+Design',
+  },
+  {
+    text:  'Affordable Bungalows',
+    image: 'https://placehold.co/1440x900/4e342e/ffcc80?text=Affordable+Bungalow',
+  },
+  {
+    text:  'Luxury Apartments',
+    image: 'https://placehold.co/1440x900/1a237e/90caf9?text=Luxury+Apartment',
+  },
+  {
+    text:  'Contemporary Layouts',
+    image: 'https://placehold.co/1440x900/004d40/a5d6a7?text=Contemporary+Layout',
+  },
 ]
 
 const FEATURES = [
@@ -51,13 +63,19 @@ export default function HomePage() {
   const [featuredPlans, setFeaturedPlans] = useState([])
   const [plansLoading,  setPlansLoading]  = useState(true)
 
-  // Two independent carousel indices with separate timers
-  const [textIndex, setTextIndex] = useState(0)
-  const [imgIndex,  setImgIndex]  = useState(0)
+  /*
+   * SINGLE SHARED INDEX
+   * ───────────────────
+   * One `activeIndex` drives both the image layers AND the keyword text.
+   * One `useEffect` with a single 4-second interval ticks them together.
+   * `key={activeIndex}` on the text span forces React to unmount + remount
+   * on every tick, which re-fires the @keyframes slideUpFade animation.
+   */
+  const [activeIndex, setActiveIndex] = useState(0)
 
   const navigate = useNavigate()
 
-  // ── Fetch featured plans (3 most-recent) ─────────────────────────────────
+  // ── Fetch featured plans ──────────────────────────────────────────────────
   useEffect(() => {
     fetchPlans()
       .then(plans => setFeaturedPlans(plans.slice(0, 3)))
@@ -65,21 +83,17 @@ export default function HomePage() {
       .finally(() => setPlansLoading(false))
   }, [])
 
-  // ── Text carousel: 3.5 s — completely independent from images ────────────
+  // ── SINGLE synchronized carousel — 4 s interval ───────────────────────────
+  // Text + image both change at exactly the same moment.
+  // CSS handles the two transitions independently:
+  //   • Image: `transition: opacity 1.2s ease-in-out` (cross-fade)
+  //   • Text:  `animation: slideUpFade` triggered by key re-mount
   useEffect(() => {
     const id = setInterval(() => {
-      setTextIndex(prev => (prev + 1) % HEADLINES.length)
-    }, 3500)
-    return () => clearInterval(id)
-  }, []) // [] — fires once on mount, cleans up on unmount
-
-  // ── Image carousel: 4 s — independent timer ───────────────────────────────
-  useEffect(() => {
-    const id = setInterval(() => {
-      setImgIndex(prev => (prev + 1) % HERO_IMAGES.length)
+      setActiveIndex(prev => (prev + 1) % SLIDES.length)
     }, 4000)
     return () => clearInterval(id)
-  }, []) // [] — fires once on mount, cleans up on unmount
+  }, []) // Empty deps — fires once on mount, cleans up on unmount
 
   const handleSearch = (e) => {
     e.preventDefault()
@@ -91,45 +105,46 @@ export default function HomePage() {
     <div className="home">
 
       {/* ══════════════════════════════════════════════════════════════════════
-          HERO
+          HERO — synchronized text + image carousel
           ══════════════════════════════════════════════════════════════════════ */}
       <section className="hero">
 
-        {/* Background image layers — cross-fade controlled by imgIndex */}
+        {/* Background image layers — cross-fade on opacity 1.2s ease-in-out */}
         <div className="hero__slides" aria-hidden="true">
-          {HERO_IMAGES.map((src, i) => (
+          {SLIDES.map((slide, i) => (
             <div
               key={i}
-              className={`hero__slide${imgIndex === i ? ' hero__slide--active' : ''}`}
-              style={{ backgroundImage: `url(${src})` }}
+              className={`hero__slide${activeIndex === i ? ' hero__slide--active' : ''}`}
+              style={{ backgroundImage: `url(${slide.image})` }}
             />
           ))}
         </div>
 
-        {/* Semi-transparent overlay — text always readable */}
+        {/* Dark gradient overlay */}
         <div className="hero__overlay" aria-hidden="true" />
 
-        {/* Decorative glow circles */}
+        {/* Decorative glow orbs */}
         <div className="hero__circle hero__circle--1" aria-hidden="true" />
         <div className="hero__circle hero__circle--2" aria-hidden="true" />
         <div className="hero__circle hero__circle--3" aria-hidden="true" />
 
-        {/* ── Hero copy ──────────────────────────────────────────────────── */}
+        {/* ── Copy ───────────────────────────────────────────────────────── */}
         <div className="hero__content">
-
-          <p className="hero__eyebrow" aria-label="Tanzania's number one house plan marketplace">
-            Tanzania's #1 House Plan Marketplace
-          </p>
+          <p className="hero__eyebrow">Tanzania's #1 House Plan Marketplace</p>
 
           <h1 className="hero__headline">
             Pata Ramani ya
             {/*
-              key={textIndex} forces React to unmount + remount this span
-              on every interval tick, which re-triggers the slideUpFade
-              CSS animation — no JS animation library needed.
+              key={activeIndex} — React destroys + recreates this span on every
+              carousel tick, which applies @keyframes slideUpFade from frame 0.
+              SLIDES[activeIndex].text changes simultaneously with the image.
             */}
-            <span key={textIndex} className="hero__keyword" aria-live="polite">
-              {HEADLINES[textIndex]}
+            <span
+              key={activeIndex}
+              className="hero__keyword"
+              aria-live="polite"
+            >
+              {SLIDES[activeIndex].text}
             </span>
           </h1>
 
@@ -138,7 +153,7 @@ export default function HomePage() {
             Buy, download, and build — all in one place.
           </p>
 
-          {/* Search bar */}
+          {/* Search */}
           <form className="hero__search" onSubmit={handleSearch} role="search">
             <div className="hero__search-inner">
               <Search size={18} className="hero__search-icon" strokeWidth={1.75} />
@@ -156,7 +171,7 @@ export default function HomePage() {
             </div>
           </form>
 
-          {/* Quick filter tag pills */}
+          {/* Quick filter pills */}
           <div className="hero__quick-tags">
             {['3-Bedroom', '4-Bedroom', 'Modern', 'Bungalow', 'Double-Storey'].map(tag => (
               <Link key={tag} to={`/plans?search=${encodeURIComponent(tag)}`} className="hero__tag">
@@ -166,15 +181,16 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Image carousel dot indicators */}
-        <div className="hero__dots" role="group" aria-label="Background slide indicators">
-          {HERO_IMAGES.map((_, i) => (
+        {/* Dot indicators — clicking syncs BOTH text and image */}
+        <div className="hero__dots" role="group" aria-label="Carousel slide indicators">
+          {SLIDES.map((_, i) => (
             <button
               key={i}
-              aria-label={`Slide ${i + 1}`}
-              aria-current={imgIndex === i ? 'true' : 'false'}
-              className={`hero__dot${imgIndex === i ? ' hero__dot--active' : ''}`}
-              onClick={() => setImgIndex(i)}
+              aria-label={`Slide ${i + 1}: ${SLIDES[i].text}`}
+              aria-current={activeIndex === i ? 'true' : 'false'}
+              className={`hero__dot${activeIndex === i ? ' hero__dot--active' : ''}`}
+              onClick={() => setActiveIndex(i)}
+              type="button"
             />
           ))}
         </div>
