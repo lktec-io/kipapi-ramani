@@ -340,3 +340,46 @@
   .checkout-step__label { display: none; }
   .checkout-step--active .checkout-step__label { display: block; }
 }
+
+/* ── Mobile touch target enforcement ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Payment option labels — taller tap surface */
+  .payment-option {
+    min-height: 72px;
+    padding: var(--space-4) var(--space-4);
+  }
+
+  /* Form inputs — minimum 48px height */
+  .form-input {
+    padding: 13px 14px;
+    font-size: 0.95rem;
+    min-height: 48px;
+  }
+
+  .form-phone-prefix {
+    min-height: 48px;
+    font-size: 0.9rem;
+  }
+
+  /* Submit CTA — full-width, tall tap area */
+  .checkout-submit-btn {
+    padding: 18px var(--space-6);
+    font-size: 1rem;
+    min-height: 56px;
+  }
+
+  /* Summary card — full width with no sticky on mobile */
+  .checkout-summary__card {
+    padding: var(--space-4);
+  }
+
+  /* Make checkout page use full viewport width */
+  .checkout-page__inner {
+    padding: 0 var(--space-3);
+  }
+
+  /* Form sections */
+  .form-section {
+    padding: var(--space-4);
+  }
+}

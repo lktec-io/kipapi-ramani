@@ -294,8 +294,14 @@ export default function PlansPage() {
                 </div>
               )}
               <div className="plans-grid">
-                {results.map(plan => (
-                  <PlanCard key={plan.id} plan={plan} />
+                {results.map((plan, i) => (
+                  <div
+                    key={plan.id}
+                    className="plans-grid__item"
+                    style={{ '--stagger-delay': `${Math.min(i * 55, 440)}ms` }}
+                  >
+                    <PlanCard plan={plan} />
+                  </div>
                 ))}
               </div>
             </>

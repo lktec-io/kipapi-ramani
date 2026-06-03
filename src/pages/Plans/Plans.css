@@ -300,6 +300,12 @@
   gap: var(--space-5);
 }
 
+/* Staggered grid item entrance */
+.plans-grid__item {
+  animation: cardEntrance 0.45s ease both;
+  animation-delay: var(--stagger-delay, 0ms);
+}
+
 /* Loading spinner */
 .plans-loading {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -398,4 +404,46 @@
   .plans-grid { grid-template-columns: 1fr; }
   .plans-header__inner { flex-direction: column; align-items: flex-start; }
   .plans-header__meta  { flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+}
+
+/* ── Mobile touch target enforcement (WCAG 2.5.5 minimum 44×44px) ─────────── */
+@media (max-width: 768px) {
+  /* Filter chips: ensure finger-tap comfort */
+  .filter-chip {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    font-size: 0.82rem;
+  }
+
+  /* Filter toggle button */
+  .filter-toggle {
+    min-height: 48px;
+    font-size: 0.88rem;
+    padding: 12px 18px;
+  }
+
+  /* Price range track — taller for thumb grab */
+  .filter-range {
+    height: 6px;
+    cursor: pointer;
+  }
+
+  /* Search input — slightly taller */
+  .filter-input {
+    padding: 11px 11px 11px 36px;
+    font-size: 0.9rem;
+  }
+
+  /* Sort dropdown */
+  .sort-select {
+    padding: 10px 36px 10px 14px;
+    font-size: 0.86rem;
+  }
+
+  /* Sidebar open state gets slide-down animation on mobile */
+  .filter-sidebar--open {
+    animation: fadeSlideUp 0.25s ease both;
+  }
 }

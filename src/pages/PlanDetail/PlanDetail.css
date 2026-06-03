@@ -407,8 +407,48 @@
 }
 
 @media (max-width: 560px) {
-  .detail-specs  { grid-template-columns: repeat(2, 1fr); }
-  .detail-gallery__thumbs { grid-template-columns: repeat(4, 1fr); }
-  .related__scroll { grid-template-columns: 1fr; }
-  .related__head { flex-direction: column; align-items: flex-start; }
+  .detail-specs           { grid-template-columns: repeat(2, 1fr); }
+  .detail-gallery__thumbs { grid-template-columns: repeat(2, 1fr); }
+  .related__scroll        { grid-template-columns: 1fr; }
+  .related__head          { flex-direction: column; align-items: flex-start; }
+}
+
+/* ── Mobile touch targets & spacing ──────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Spec cards: bigger minimum tap area */
+  .detail-spec {
+    padding: var(--space-4);
+    min-height: 64px;
+  }
+
+  /* Thumbnail strip: 2-up on small screens so they're tappable */
+  .detail-gallery__thumbs {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+
+  /* Thumb buttons: tall enough to tap */
+  .detail-gallery__thumb {
+    min-height: 72px;
+  }
+
+  /* Add-to-cart CTA: larger hit area */
+  .detail-cart-btn {
+    padding: 18px var(--space-6);
+    font-size: 1rem;
+  }
+
+  /* Trust list: more breathable on mobile */
+  .detail-trust__item {
+    font-size: 0.82rem;
+    gap: var(--space-3);
+  }
+
+  /* Price: adjust for small screens */
+  .detail-price {
+    font-size: 1.5rem;
+  }
+
+  /* Related plans heading */
+  .related__inner { padding: 0 var(--space-4); }
 }
